@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "auto_replanter",
+  "version": "${version}",
+  "name": "Auto replanter",
+  "description": "Mod Description",
+  "authors": [
+    "cichu"
+  ],
+  "contact": {
+    "homepage": "https://example.com/",
+    "issues": "https://example.com/",
+    "sources": "https://example.com/"
+  },
+  "license": "The Unlicense",
+  "icon": "assets/auto_replanter/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "com.github.cichu.auto_replanter.AutoReplanter"
+      }
+    ]
+  },
+  "mixins": [
+    "auto_replanter.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "fabric": "*",
+    "fabric-language-kotlin": ">=1.7.4+kotlin.1.6.21",
+    "minecraft": "1.18.x",
+    "java": ">=17"
+  }
+}
