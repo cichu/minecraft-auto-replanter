@@ -1,6 +1,8 @@
 # Auto replanter
 A Minecraft mod created to improve farming.
 
+[![GitHub Super-Linter](https://github.com/cichu/minecraft-auto-replanter/workflows/Gradle%20Error%20Checker/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 ### Summary
 Auto replanter is a small and simple mod improving farming in Minecraft by adding ability to harvest nad automatically planting the same crop.
 
