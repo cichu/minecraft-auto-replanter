@@ -3,16 +3,16 @@
   "id": "auto_replanter",
   "version": "${version}",
   "name": "Auto replanter",
-  "description": "Mod Description",
+  "description": "Minecraft mod for harvesting and auto replanting crops.",
   "authors": [
     "cichu"
   ],
   "contact": {
-    "homepage": "https://example.com/",
-    "issues": "https://example.com/",
-    "sources": "https://example.com/"
+    "homepage": "https://github.com/cichu/minecraft-auto-replanter",
+    "issues": "https://github.com/cichu/minecraft-auto-replanter/issues",
+    "sources": "https://github.com/cichu/minecraft-auto-replanter"
   },
-  "license": "The Unlicense",
+  "license": "MIT license",
   "icon": "assets/auto_replanter/icon.png",
   "environment": "*",
   "entrypoints": {
