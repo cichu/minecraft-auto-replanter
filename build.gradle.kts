@@ -7,7 +7,7 @@ plugins {
 base {
     val archivesBaseName: String by project
     val minecraftVersion: String by project
-    archivesName.set("${archivesBaseName}-mc${minecraftVersion}")
+    archivesName.set("$archivesBaseName-mc$minecraftVersion")
 }
 
 val modVersion: String by project
