@@ -92,6 +92,8 @@
     <!--   <property name="fileExtensions" value="java"/> -->
     <!-- </module> -->
 
+    <!-- Enables @SuppressWarnings Support                -->
+    <module name="SuppressWarningsFilter"/>
     <module name="TreeWalker">
 
         <!-- Checks for Javadoc comments.                     -->
@@ -104,6 +106,8 @@
         </module>
         <module name="JavadocStyle"/>
         <module name="MissingJavadocMethod"/>
+        <!-- Enables @SuppressWarnings Support                -->
+        <module name="SuppressWarningsHolder"/>
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See https://checkstyle.org/config_naming.html -->
