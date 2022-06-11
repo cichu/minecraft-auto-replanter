@@ -1,5 +1,7 @@
 ---
-name: Lint codebase on push, except main branch
+# Linting for all branches other than main.
+# Checks only changed files.
+name: Super-Linter check
 
 on:
   push:

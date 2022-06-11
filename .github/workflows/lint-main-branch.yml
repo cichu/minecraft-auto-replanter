@@ -1,5 +1,7 @@
 ---
-name: Lint codebase on push to main
+# Linting for main branch.
+# Checks all files in project.
+name: Super-Linter check
 
 on:
   push:
