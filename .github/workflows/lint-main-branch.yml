@@ -1,5 +1,5 @@
 ---
-# Linting for main branch.
+# Linting for main branches.
 # Checks all files in project.
 name: Super-Linter check
 
@@ -7,6 +7,11 @@ on:
   push:
     branches:
       - main
+      - mc1.18.2
+  pull_request:
+    branches:
+      - main
+      - mc1.18.2
 jobs:
   build:
     runs-on: ubuntu-latest
