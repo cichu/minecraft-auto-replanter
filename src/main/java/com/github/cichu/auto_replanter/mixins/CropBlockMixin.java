@@ -29,23 +29,23 @@ public class CropBlockMixin extends AbstractBlockMixin {
     // FIXME: fix used tools all types of crops
     @Override
     protected void injectAtHeadIntoOnUseMethod(
-            BlockState state,
-            World world,
-            BlockPos pos,
-            PlayerEntity player,
-            Hand hand,
-            BlockHitResult hit,
-            CallbackInfoReturnable<ActionResult> callbackInfo) {
+            final BlockState state,
+            final World world,
+            final BlockPos pos,
+            final PlayerEntity player,
+            final Hand hand,
+            final BlockHitResult hit,
+            final CallbackInfoReturnable<ActionResult> callbackInfo) {
         handleOnUseHarvesting(state, world, pos, player, hand, callbackInfo);
     }
 
     private void handleOnUseHarvesting(
-            BlockState state,
-            World world,
-            BlockPos pos,
-            PlayerEntity player,
-            Hand hand,
-            CallbackInfoReturnable<ActionResult> callbackInfo) {
+            final BlockState state,
+            final World world,
+            final BlockPos pos,
+            final PlayerEntity player,
+            final Hand hand,
+            final   CallbackInfoReturnable<ActionResult> callbackInfo) {
         ItemStack stackInHand = player.getStackInHand(hand);
         if (isFullyGrown(state) && stackInHand.isOf(getPickUpTool())) {
             if (!world.isClient) {
@@ -56,7 +56,7 @@ public class CropBlockMixin extends AbstractBlockMixin {
         }
     }
 
-    private boolean isFullyGrown(BlockState state) {
+    private boolean isFullyGrown(final BlockState state) {
         return getThisInstance().isMature(state);
     }
 
@@ -64,7 +64,13 @@ public class CropBlockMixin extends AbstractBlockMixin {
         return Items.SHEARS;
     }
 
-    private void harvestAndReplantCrop(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stackInHand) {
+    private void harvestAndReplantCrop(
+            final BlockState state,
+            final World world,
+            final BlockPos pos,
+            final PlayerEntity player,
+            final Hand hand,
+            final ItemStack stackInHand) {
         playSound(world, pos);
         updateCropState(world, pos);
         dropLoot(state, world, pos);
@@ -75,15 +81,15 @@ public class CropBlockMixin extends AbstractBlockMixin {
         return (CropBlock) (Object) this;
     }
 
-    private void playSound(World world, BlockPos pos) {
+    private void playSound(final World world, final BlockPos pos) {
         world.playSound(null, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundCategory.BLOCKS, 1, 1);
     }
 
-    private void updateCropState(World world, BlockPos pos) {
+    private void updateCropState(final World world, final BlockPos pos) {
         world.setBlockState(pos, getThisInstance().withAge(0), Block.NOTIFY_LISTENERS);
     }
 
-    private void dropLoot(BlockState state, World world, BlockPos pos) {
+    private void dropLoot(final BlockState state, final  World world, final BlockPos pos) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         List<ItemStack> droppedStacks = Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity);
         for (ItemStack droppedStack : droppedStacks) {
@@ -95,14 +101,19 @@ public class CropBlockMixin extends AbstractBlockMixin {
         }
     }
 
-    private boolean isSeedItem(ItemStack droppedStack) {
+    private boolean isSeedItem(final ItemStack droppedStack) {
         Item seedItem = getThisInstance()
                 .getPickStack(null, null, null)
                 .getItem();
         return droppedStack.isOf(seedItem);
     }
 
-    private void updateToolState(World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack tool) {
+    private void updateToolState(
+            final World world,
+            final BlockPos pos,
+            final PlayerEntity player,
+            final Hand hand,
+            final ItemStack tool) {
         tool.damage(1, player, playerEntity -> playerEntity.sendToolBreakStatus(hand));
         world.emitGameEvent(player, GameEvent.SHEAR, pos);
         player.incrementStat(Stats.USED.getOrCreateStat(getPickUpTool()));
