@@ -20,13 +20,13 @@ public class AbstractBlockMixin {
     @SuppressWarnings("CancellableInjectionUsage") // cancellable used in inheriting class
     @Inject(at = @At(value = "HEAD"), method = "onUse", cancellable = true)
     protected void injectAtHeadIntoOnUseMethod(
-            BlockState state,
-            World world,
-            BlockPos pos,
-            PlayerEntity player,
-            Hand hand,
-            BlockHitResult hit,
-            CallbackInfoReturnable<ActionResult> callbackInfo) {
+            final BlockState state,
+            final World world,
+            final BlockPos pos,
+            final PlayerEntity player,
+            final Hand hand,
+            final BlockHitResult hit,
+            final CallbackInfoReturnable<ActionResult> callbackInfo) {
         // empty on purpose
     }
 }
