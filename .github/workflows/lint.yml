@@ -16,3 +16,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           VALIDATE_ALL_CODEBASE: true
+          JAVA_FILE_NAME: checkstyle.xml
