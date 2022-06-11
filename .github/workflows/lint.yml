@@ -1,7 +1,10 @@
 ---
-name: Lint codebase
+name: Lint codebase on push
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,6 +18,54 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+          # validate only changed files
+          VALIDATE_ALL_CODEBASE: false
+          LINTER_RULES_PATH: /
+          VALIDATE_JAVA: true
+          JAVA_FILE_NAME: checkstyle.xml
+
+          VALIDATE_JSON: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_NATURAL_LANGUAGE: true
+          VALIDATE_XML: true
+          VALIDATE_YAML: true
+          VALIDATE_GITLEAKS: true
+          VALIDATE_GITHUB_ACTIONS: true
+          # Groovy validation includes Gradle files
+          VALIDATE_GROOVY: true
+
+---
+name: Lin codebase on push to main
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Check for errors.
+        uses: github/super-linter/slim@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # validate whole codebase
           VALIDATE_ALL_CODEBASE: true
           LINTER_RULES_PATH: /
+          VALIDATE_JAVA: true
           JAVA_FILE_NAME: checkstyle.xml
+
+          VALIDATE_JSON: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_NATURAL_LANGUAGE: true
+          VALIDATE_XML: true
+          VALIDATE_YAML: true
+          VALIDATE_GITLEAKS: true
+          VALIDATE_GITHUB_ACTIONS: true
+          # Groovy validation includes Gradle files
+          VALIDATE_GROOVY: true
