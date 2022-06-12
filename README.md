@@ -8,22 +8,37 @@ Auto replanter is a small and simple mod improving farming in Minecraft by addin
 
 ## Table of contents
 1. [About the mod](#about-the-mod)
-2. [Roadmap](#roadmap)
-3. [How to report a bug or request new feature](#reporting-bugs-or-requesting-features)
+2. [Getting started](#getting-started)
+   1. [Prerequisites](#prerequisites)
+   2. [Installation](#installation)
+3. [Roadmap](#roadmap)
+4. [How to report a bug or request new feature](#reporting-bugs-or-requesting-features)
 
 ## About the mod
-This mod improves farming in Minecraft by automatically planting crops after you harvest them.
+This mod improves farming in Minecraft by automatically planting crops after you harvest them. It also prevents you from destroying crops that are not fully grown yet.
 
-To do so you need to hold a harvesting tool in your hand: shears. Once you have them in hand simply use them on a fully grown crop to harvest it.
+To harvest crops you just need a proper tool for harvesting given type of crop in hand and then just click on a fully grown block crop.
 
-Harvestable crops:
-- Wheat
-- Beetroot
-- Carrot
-- Potato
+Here is a list of tools with crops they can harvest:
+- Shears
+  - Wheat
+- Hoe
+  - Beetroots
+  - Carrots
+  - Potatoes
+
+## Getting started
+
+### Prerequisites
+To use this mod you need to have Minecraft with Fabric loader installed.  
+Instructions how to install Fabric loader can be found [here](https://fabricmc.net/wiki/install).
+
+### Installation
+To install this mod first download the newest version from the [GitHub releases](https://github.com/cichu/minecraft-auto-replanter/releases) for your version of Minecraft.  
+Once the .jar file finishes downloading move it into mods folder inside your Minecraft installation folder.
 
 ## Roadmap
-- [ ] Use different harvesting tools for different crops
+- [x] Use different harvesting tools for different crops
 - [ ] Allow harvesting more crops
   - [ ] Cocoa beans
   - [ ] Nether warts
