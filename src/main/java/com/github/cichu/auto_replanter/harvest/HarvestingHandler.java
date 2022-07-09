@@ -19,8 +19,10 @@ import net.minecraft.world.event.GameEvent;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -120,21 +122,30 @@ public final class HarvestingHandler {
     }
 
     private void dropLoot(final World world, final BlockPos pos, final BlockState state, final CropBlock cropBlock) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        List<ItemStack> droppedStacks = Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity);
-        for (ItemStack droppedStack : droppedStacks) {
-            // no need for player to manually replant crop, so every harvest automatically drops one seed less
-            if (isSeedItem(cropBlock, droppedStack)) {
-                droppedStack.decrement(1);
-            }
-            Block.dropStack(world, pos, droppedStack);
-        }
+        List<ItemStack> stacksToDrop = getStacksToDrop(world, pos, state);
+        findSeedStack(cropBlock, stacksToDrop).ifPresent(seedStack -> seedStack.decrement(1));
+        dropStacks(world, pos, stacksToDrop);
     }
 
-    private boolean isSeedItem(final CropBlock block, final ItemStack droppedStack) {
-        Item seedItem = block.getPickStack(null, null, null)
+    private List<ItemStack> getStacksToDrop(final World world, final BlockPos pos, final BlockState state) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        return Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity);
+    }
+
+    private Optional<ItemStack> findSeedStack(final CropBlock cropBlock, final Collection<ItemStack> stacks) {
+        Item seedItem = getSeedItem(cropBlock);
+        return stacks.stream()
+                .filter(stack -> stack.isOf(seedItem))
+                .findAny();
+    }
+
+    private Item getSeedItem(final CropBlock cropBlock) {
+        return cropBlock.getPickStack(null, null, null)
                 .getItem();
-        return droppedStack.isOf(seedItem);
+    }
+
+    private void dropStacks(final World world, final BlockPos pos, final Collection<ItemStack> droppedStacks) {
+        droppedStacks.forEach(droppedStack -> Block.dropStack(world, pos, droppedStack));
     }
 
     private void updateToolState(
