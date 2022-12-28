@@ -1,6 +1,6 @@
 package com.github.cichu.auto_replanter.mixins;
 
-import com.github.cichu.auto_replanter.harvest.HarvestingHandler;
+import com.github.cichu.auto_replanter.harvest.CropsHarvestingHandler;
 import net.minecraft.block.BeetrootsBlock;
 import net.minecraft.block.CarrotsBlock;
 import net.minecraft.block.PotatoesBlock;
@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(HoeItem.class)
 public class HoeItemMixin {
 
-    private static final HarvestingHandler HARVESTING_HANDLER
-            = new HarvestingHandler(SoundEvents.ITEM_HOE_TILL, BeetrootsBlock.class, CarrotsBlock.class, PotatoesBlock.class);
+    private static final CropsHarvestingHandler HARVESTING_HANDLER = new CropsHarvestingHandler(
+            SoundEvents.ITEM_HOE_TILL, BeetrootsBlock.class, CarrotsBlock.class, PotatoesBlock.class);
 
     @Inject(at = @At("HEAD"), method = "useOnBlock", cancellable = true)
     private void injectAtHeadIntoUseOnBlockMethod(

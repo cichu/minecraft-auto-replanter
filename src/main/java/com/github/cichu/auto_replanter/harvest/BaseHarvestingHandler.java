@@ -2,7 +2,6 @@ package com.github.cichu.auto_replanter.harvest;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.CropBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -18,50 +17,28 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public final class HarvestingHandler {
+public abstract class BaseHarvestingHandler<B extends Block> {
+
+    private final Class<B> handledClass;
 
     private final SoundEvent soundEvent;
 
-    private final Set<Class<? extends CropBlock>> cropsToHandle;
-
-    /**
-     * Creates new instance of {@link HarvestingHandler}.
-     * @param soundEvent The {@link SoundEvent} to be played on a successful harvest. Cannot be null.
-     * @param cropToHandle The class of a {@link CropBlock} or its descendant for this handler to handle. Cannot be null.
-     * @param additionalCropsToHandle Additional classes of a {@link CropBlock} or its descendants for this handler
-     *                               in case it should handle more than one type of crops. Not required but cannot be null.
-     * @throws HarvestingHandlerInstantiationException When {@code soundEvent}, {@code cropToHandle} or any of
-     * {@code additionalCropsToHandle} is null.
-     */
-    @SafeVarargs
-    public HarvestingHandler(
-            final SoundEvent soundEvent,
-            final Class<? extends CropBlock> cropToHandle,
-            final Class<? extends CropBlock>... additionalCropsToHandle) {
-        validate(soundEvent, cropToHandle, additionalCropsToHandle);
+    protected BaseHarvestingHandler(final Class<B> blockToHandle, final SoundEvent soundEvent) {
+        validate(blockToHandle, soundEvent);
+        this.handledClass = blockToHandle;
         this.soundEvent = soundEvent;
-        this.cropsToHandle = Stream.concat(Stream.of(cropToHandle), Arrays.stream(additionalCropsToHandle))
-                .collect(Collectors.toUnmodifiableSet());
     }
 
-    private static void validate(
-            final SoundEvent soundEvent,
-            final Class<? extends CropBlock> cropToHandle,
-            final Class<? extends CropBlock>[] additionalCropsToHandle) {
+    private static void validate(final Class<? extends Block> blockToHandle, final SoundEvent soundEvent) {
+        if (blockToHandle == null) {
+            throw new HarvestingHandlerInstantiationException("Class of Block to handle is required");
+        }
         if (soundEvent == null) {
             throw new HarvestingHandlerInstantiationException("Sound event is required");
-        }
-        if (cropToHandle == null || Arrays.stream(additionalCropsToHandle).anyMatch(Objects::isNull)) {
-            throw new HarvestingHandlerInstantiationException("No crop to handle can be null");
         }
     }
 
@@ -80,12 +57,11 @@ public final class HarvestingHandler {
         BlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
 
-        if (canHandle(block)) {
-            CropBlock cropBlock = (CropBlock) block;
-
-            if (isMature(cropBlock, blockState)) {
+        if (handledClass.isInstance(block)) {
+            B handledBlock = handledClass.cast(block);
+            if (canHandle(handledBlock) && isMature(handledBlock, blockState)) {
                 if (!world.isClient) {
-                    handleHarvesting(world, pos, blockState, cropBlock, context);
+                    handleHarvesting(world, pos, blockState, handledBlock, context);
                 }
                 callbackInfo.setReturnValue(ActionResult.success(world.isClient));
                 callbackInfo.cancel();
@@ -93,23 +69,21 @@ public final class HarvestingHandler {
         }
     }
 
-    private boolean canHandle(final Block block) {
-        return cropsToHandle.contains(block.getClass());
-    }
+    protected abstract boolean canHandle(B block);
 
-    private boolean isMature(final CropBlock cropBlock, final BlockState blockState) {
-        return cropBlock.isMature(blockState);
-    }
+    protected abstract boolean isMature(B block, BlockState blockState);
+
+    protected abstract BlockState getUpdatedBlockState(B block, BlockState currentState);
 
     private void handleHarvesting(
             final World world,
             final BlockPos pos,
             final BlockState blockState,
-            final CropBlock cropBlock,
+            final B block,
             final ItemUsageContext context) {
         playSound(world, pos);
-        updateCropState(world, pos, cropBlock);
-        dropLoot(world, pos, blockState, cropBlock);
+        updateBlockState(world, pos, block, blockState);
+        dropLoot(world, pos, blockState, block);
         updateToolState(world, pos, context.getPlayer(), context.getHand(), context.getStack());
     }
 
@@ -117,13 +91,17 @@ public final class HarvestingHandler {
         world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 1, 1);
     }
 
-    private void updateCropState(final World world, final BlockPos pos, final CropBlock cropBlock) {
-        world.setBlockState(pos, cropBlock.withAge(0), Block.NOTIFY_LISTENERS);
+    private void updateBlockState(
+            final World world,
+            final BlockPos pos,
+            final B block,
+            final BlockState blockState) {
+        world.setBlockState(pos, getUpdatedBlockState(block, blockState), Block.NOTIFY_LISTENERS);
     }
 
-    private void dropLoot(final World world, final BlockPos pos, final BlockState state, final CropBlock cropBlock) {
+    private void dropLoot(final World world, final BlockPos pos, final BlockState state, final Block block) {
         List<ItemStack> stacksToDrop = getStacksToDrop(world, pos, state);
-        findSeedStack(cropBlock, stacksToDrop).ifPresent(seedStack -> seedStack.decrement(1));
+        findSeedStack(block, stacksToDrop).ifPresent(seedStack -> seedStack.decrement(1));
         dropStacks(world, pos, stacksToDrop);
     }
 
@@ -132,16 +110,15 @@ public final class HarvestingHandler {
         return Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity);
     }
 
-    private Optional<ItemStack> findSeedStack(final CropBlock cropBlock, final Collection<ItemStack> stacks) {
-        Item seedItem = getSeedItem(cropBlock);
+    private Optional<ItemStack> findSeedStack(final Block block, final Collection<ItemStack> stacks) {
+        Item seedItem = getSeedItem(block);
         return stacks.stream()
                 .filter(stack -> stack.isOf(seedItem))
                 .findAny();
     }
 
-    private Item getSeedItem(final CropBlock cropBlock) {
-        return cropBlock.getPickStack(null, null, null)
-                .getItem();
+    private Item getSeedItem(final Block block) {
+        return block.getPickStack(null, null, null).getItem();
     }
 
     private void dropStacks(final World world, final BlockPos pos, final Collection<ItemStack> droppedStacks) {
@@ -155,6 +132,6 @@ public final class HarvestingHandler {
             final Hand hand,
             final ItemStack stack) {
         stack.damage(1, player, playerEntity -> playerEntity.sendToolBreakStatus(hand));
-        world.emitGameEvent(player, GameEvent.SHEAR, pos);
+        world.emitGameEvent(player, GameEvent.ITEM_INTERACT_FINISH, pos);
     }
 }
