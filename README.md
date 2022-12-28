@@ -26,6 +26,8 @@ Here is a list of tools with crops they can harvest:
   - Beetroots
   - Carrots
   - Potatoes
+- Axe
+  - Cocoa beans
 
 ## Getting started
 
@@ -40,7 +42,7 @@ Once the .jar file finishes downloading move it into mods folder inside your Min
 ## Roadmap
 - [x] Use different harvesting tools for different crops
 - [ ] Allow harvesting more crops
-  - [ ] Cocoa beans
+  - [x] Cocoa beans
   - [ ] Nether warts
 
 ## Reporting bugs or requesting features
