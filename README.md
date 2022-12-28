@@ -22,6 +22,8 @@ Here is a list of tools with crops they can harvest:
   - Beetroots
   - Carrots
   - Potatoes
+- Axe
+  - Cocoa beans
 
 Once you have a proper tool in hand, you can simply right-click respective, fully grown crop.
 This will harvest it and plant the same type of crop in its place.
@@ -45,7 +47,7 @@ Instructions how to install Fabric loader can be found [here](https://fabricmc.n
 ## Roadmap
 - [x] Use different harvesting tools for different crops
 - [ ] Allow harvesting more crops
-  - [ ] Cocoa beans
+  - [x] Cocoa beans
   - [ ] Nether warts
 - [ ] Add ability to put looting enchantment on the harvesting tools
 
