@@ -132,6 +132,6 @@ public abstract class BaseHarvestingHandler<B extends Block> {
             final Hand hand,
             final ItemStack stack) {
         stack.damage(1, player, playerEntity -> playerEntity.sendToolBreakStatus(hand));
-        world.emitGameEvent(player, GameEvent.ITEM_INTERACT_FINISH, pos);
+        world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
     }
 }
